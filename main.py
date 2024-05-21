@@ -29,7 +29,6 @@ argnames = {
   6: "collapser, input, shrconf"
 }
 
-@total_ordering
 class AT:
   def __init__(self, type: int, **kwargs):
     self.type = type
@@ -62,3 +61,34 @@ class AT:
         return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["input"]) + ")"
       case _:
         raise Exception("Arithmetic term could not be stringified.")
+
+class ME:
+  def __init__(self, **kwargs):
+    if kwargs == {}:
+      self.conj = []
+      self.term = None
+      self.inp = None
+      self.iters = 0
+    else:
+      if "conj" in kwargs:
+        self.conj = kwargs["conj"]
+      else:
+        self.conj = []
+      if "term" in kwargs:
+        self.term = kwargs["term"]
+      else:
+        raise Exception(f"ME constructor argument \"term\" missing.")
+      if "inp" in kwargs:
+        self.inp = kwargs["inp"]
+      else:
+        self.inp = ME().copy()
+      if "iters" in kwargs:
+        self.iters = kwargs["iters"]
+      else:
+        self.iters = 1
+  def copy(self):
+    return ME(conj=self.conj, term=self.term, inp=self.inp, iters=self.iters)
+
+class Ordinal:
+  def __init__(self, type: int, **kwargs):
+    pass
