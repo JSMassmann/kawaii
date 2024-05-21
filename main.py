@@ -39,13 +39,13 @@ class AT:
   def copy(self):
     return AT(self.type, **self.inps)
   def __repr__(self):
-    return str(self)
+    return str(self).replace("x","t")
   def __str__(self):
     match self.type:
       case 0:
         return str(self.inps["value"])
       case 1:
-        return "t"
+        return "x"
       case 2:
         return str(self.inps["summand"]) + " + " + str(self.inps["addend"])
       case 3:
@@ -84,6 +84,38 @@ class ME:
   def copy(self):
     return ME(conj=self.conj, term=self.term, inp=self.inp, iters=self.iters)
 
+ordtypes = {
+  0: 0,
+  1: 2,
+  2: 1,
+  3: 3
+}
+
+ordtypedescs = {
+  0: "zero",
+  2: "sum",
+  3: "N",
+  4: "Psi"
+}
+
+ordargnames = {
+  2: "summand, addend",
+  3: "input",
+  4: "collapser, input, shrconf"
+}
+
+@total_ordering
 class Ordinal:
   def __init__(self, type: int, **kwargs):
-    pass
+    self.type = type
+    self.inps = kwargs.copy()
+    if self.type not in ordtypes:
+      raise Exception("Type not in range 0-3.")
+    elif len(self.inps) != ordtypes[self.type]:
+      raise Exception(f"Type {self.type} ({ordtypedescs[self.type]} ordinal) takes exactly {ordtypes[self.type]} arguments.")
+    elif ", ".join(list(self.inps.keys())) != ordargnames[self.type]:
+      raise Exception(f"Type {self.type} ({ordtypedescs[self.type]} ordinal)'s arguments must be \"{ordargnames[self.type]}\".")
+  def copy(self):
+    return AT(self.type, **self.inps)
+  def __repr__(self):
+    return str(self)
