@@ -3,7 +3,7 @@ A Python library for handling ordinals up to, almost, the proof-theoretic ordina
 
 Done so far:
 
-- Constructor, copying and stringification methods for <code>ArithmeticTerm</code> class.
+- Constructor, copying and stringification methods for <code>AT</code> class.
 
 To do:
 
