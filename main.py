@@ -6,27 +6,24 @@ types = {
   2: 2,
   3: 1,
   4: 1,
-  5: 1,
-  6: 3,
+  5: 3,
 }
 
 typedescs = {
   0: "constant value",
   1: "identity",
   2: "sum",
-  3: "exponential",
-  4: "cardinal successor",
-  5: "N-type",
-  6: "Psi",
+  3: "cardinal successor",
+  4: "N-type",
+  5: "Psi",
 }
 
 argnames = {
   0: "value",
   2: "summand, addend",
-  3: "exponent",
-  4: "input",
-  5: "shrconf",
-  6: "collapser, input, shrconf"
+  3: "input",
+  4: "shrconf",
+  5: "collapser, input, shrconf"
 }
 
 class AT:
@@ -52,12 +49,10 @@ class AT:
       case 2:
         return str(self.inps["summand"]) + " + " + str(self.inps["addend"])
       case 3:
-        return "ω^{" + str(self.inps["exponent"]) + "}"
-      case 4:
         return str(self.inps["input"]) + "^+"
-      case 5:
+      case 4:
         return "N(" + str(self.inps["shrconf"]) + ")"
-      case 6:
+      case 5:
         return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["input"]) + ")"
       case _:
         raise Exception("Arithmetic term could not be stringified.")
