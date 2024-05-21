@@ -30,7 +30,7 @@ argnames = {
 }
 
 @total_ordering
-class ArithmeticTerm:
+class AT:
   def __init__(self, type: int, **kwargs):
     self.type = type
     self.inps = kwargs.copy()
@@ -41,7 +41,7 @@ class ArithmeticTerm:
     elif ", ".join(list(self.inps.keys())) != argnames[self.type]:
       raise Exception(f"Type {self.type} ({typedescs[self.type]} arithmetic term)'s arguments must be \"{argnames[self.type]}\".")
   def copy(self):
-    return ArithmeticTerm(self.type, **self.inps)
+    return AT(self.type, **self.inps)
   def __repr__(self):
     return str(self)
   def __str__(self):
@@ -54,4 +54,11 @@ class ArithmeticTerm:
         return str(self.inps["summand"]) + " + " + str(self.inps["addend"])
       case 3:
         return "ω^{" + str(self.inps["exponent"]) + "}"
-      case _: raise Exception("Arithmetic term could not be stringified.")
+      case 4:
+        return str(self.inps["input"]) + "^+"
+      case 5:
+        return "N(" + str(self.inps["shrconf"]) + ")"
+      case 6:
+        return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["input"]) + ")"
+      case _:
+        raise Exception("Arithmetic term could not be stringified.")
