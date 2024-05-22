@@ -36,20 +36,44 @@ class AT:
       raise Exception(f"Type {self.type} ({typedescs[self.type]} arithmetic term) takes exactly {types[self.type]} arguments.")
     elif ", ".join(list(self.inps.keys())) != argnames[self.type]:
       raise Exception(f"Type {self.type} ({typedescs[self.type]} arithmetic term)'s arguments must be \"{argnames[self.type]}\".")
+    # Some monotonous typechecking
+    if self.type == 0 and not isinstance(self.inps["value"], Ordinal):
+      raise Exception("Type 0 (constant value arithmetic term)'s input must be an ordinal.")
+    elif self.type == 2 and not isinstance(self.inps["summand"], AT) or not isinstance(self.inps["addend"], AT):
+      raise Exception("Type 2 (sum arithmetic term)'s inputs must be arithmetic terms.")
+    elif self.type == 3 and not isinstance(self.inps["input"], AT):
+      raise Exception("Type 3 (cardinal successor arithmetic term)'s input must be an arithmetic term.")
+    elif self.type == 4 and not isinstance(self.inps["shrconf"], ME):
+      raise Exception("Type 4 (N-type arithmetic term)'s input must be a shrewdness encoding.")
+    elif self.type == 5 and not isinstance(self.inps["collapser"], AT) or not isinstance(self.inps["input"], AT):
+      raise Exception("Type 5 (Psi arithmetic term)'s collapser and inputs must be arithmetic terms.")
+    elif self.type == 5 and not isinstance(self.inps["shrconf"], ME):
+      raise Exception("Type 5 (Psi arithmetic term)'s input must be a shrewdness encoding.")
   def copy(self):
     return AT(self.type, **self.inps)
   def __repr__(self):
-    return str(self).replace("x","t")
+    return str(self)
   def __str__(self):
     match self.type:
       case 0:
         return str(self.inps["value"])
       case 1:
-        return "x"
+        return "t"
       case 2:
         return str(self.inps["summand"]) + " + " + str(self.inps["addend"])
       case 3:
-        return str(self.inps["input"]) + "^+"
+        if self.inps["input"].type == 3:
+          i = len(str(self.inps["input"]))-1
+          noo = False
+          while str(self.inps["input"])[i] != "^":
+            i -= 1
+            if str(self.inps["input"])[i] == "{":
+              noo = True
+              break
+          plusstr = str(self.inps["input"])[i+1:] if not noo else str(self.inps["input"])[i+1:-1]
+          return str(self.inps["input"])[:i+1] + ["{",""][int(noo)] + plusstr + "+}")
+        else:
+          return str(self.inps["input"]) + "^+"
       case 4:
         return "N(" + str(self.inps["shrconf"]) + ")"
       case 5:
@@ -119,3 +143,5 @@ class Ordinal:
     return AT(self.type, **self.inps)
   def __repr__(self):
     return str(self)
+  def __str__(self):
+    
