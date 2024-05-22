@@ -38,17 +38,6 @@ def strsucc(string): # Stringification for successor ordinals. When the input is
   plusstr = string[i+1:] if not noo else string[i+1:-1]
   return string[:i+1] + ["{",""][int(noo)] + plusstr + "+}"
 
-def normalize(cnf): # Normalization of a list of ordinals: converts it into CNF
-  i = 0
-  while i < len(cnf):
-    if i+1 == len(cnf):
-      break
-    if cnf[i] >= cnf[i+1]:
-      i += 1
-    else:
-      cnf = cnf[:i] + cnf[i+1:]
-  return cnf
-
 class AT:
   def __init__(self, type: int, **kwargs):
     self.type = type
@@ -103,7 +92,7 @@ class ME:
     if kwargs == {}:
       self.conj = []
       self.term = None
-      self.inp = None
+      self.arg = None
       self.iters = 0
     else:
       if "conj" in kwargs:
@@ -114,16 +103,23 @@ class ME:
         self.term = kwargs["term"]
       else:
         raise Exception(f"ME constructor argument \"term\" missing.")
-      if "inp" in kwargs:
-        self.inp = kwargs["inp"]
+      if "arg" in kwargs:
+        self.arg = kwargs["arg"]
       else:
-        self.inp = ME().copy()
+        self.arg = ME().copy()
       if "iters" in kwargs and kwargs["iters"] != 0:
         self.iters = kwargs["iters"]
       else:
         self.iters = 1
   def copy(self):
-    return ME(conj=self.conj, term=self.term, inp=self.inp, iters=self.iters)
+    return ME(conj=self.conj, term=self.term, arg=self.arg, iters=self.iters)
+  def __repr__(self):
+    return str(self)
+  def __str__(self):
+    if self.iters == 0:
+      return "∅"
+    else:
+      return f"({str(self.conj)}, {self.term}, {self.arg}, {self.iters})"
 
 ordtypes = {
   0: 0,
@@ -169,15 +165,15 @@ class Ordinal:
       case 0:
         return "0"
       case 1:
-        return str(self.inps["summand"]) + "+" + str(self.inps["addend"])
+        return f"{str(self.inps["summand"])}+{str(self.inps["addend"])}"
       case 2:
         if self.inps["arg"].type == 2:
           return strsucc(str(self.inps["arg"]))
         else:
-          return str(self.inps["arg"]) + "^+"
+          return f"{str(self.inps["arg"])}^+"
+      case 3:
+        return f"N({str(self.inps["shrconf"])})"
       case 4:
-        return "N(" + str(self.inps["shrconf"]) + ")"
-      case 5:
         return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["arg"]) + ")"
       case _:
         raise Exception("Ordinal could not be stringified.")
