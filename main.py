@@ -207,8 +207,37 @@ class Ordinal:
           return self.inps["summand"].__le__(comparand.inps["summand"])
         else:
           return self.inps["summand"].__le__(comparand)
-      case _:
-        raise Exception("Comparison for these ordinals currently unsupported.")
+      case 2:
+        if comparand.type == 0:
+          return False
+        elif comparand.type == 1:
+          return self.__le__(comparand.inps["summand"])
+        elif comparand.type == 2:
+          return self.inps["arg"].__le__(comparand.inps["arg"])
+        elif comparand.type == 3 and comparand.inps["shrconf"].iters == 0:
+          return False
+        else:
+          return self.inps["arg"].__le__(comparand)
+      case 3:
+        if comparand.type == 0:
+          return False
+        elif comparand.type == 1:
+          return self.__le__(comparand.inps["summand"])
+        elif comparand.type == 2:
+          return self.__le__(comparand.inps["arg"])
+        elif comparand.type == 3:
+          raise Exception("Comparison for these ordinals currently unsupported.")
+        else:
+          return True
+      case 4:
+        if comparand.type == 0:
+          return False
+        elif comparand.type == 1:
+          return self.__le__(comparand.inps["summand"])
+        elif comparand.type == 2:
+          return self.__le__(comparand.inps["arg"])
+        else:
+          raise Exception("Comparison for these ordinals currently unsupported.")
   def __eq__(self, comparand) -> bool:
     match self.type:
       case 0:
