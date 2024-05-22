@@ -38,6 +38,15 @@ def strsucc(string): # Stringification for successor ordinals. When the input is
   plusstr = string[i+1:] if not noo else string[i+1:-1]
   return string[:i+1] + ["{",""][int(noo)] + plusstr + "+}"
 
+def listunion(l1,l2): # Union of lists, because sets can't contain custom objects (unless we have __hash__, but that's not possible either)
+  new = l1.copy()
+  for e in l2:
+    if e in new:
+      pass
+    else:
+      new.append(e)
+  return new
+
 class AT:
   def __init__(self, type: int, **kwargs):
     self.type = type
@@ -93,7 +102,7 @@ class ME:
       self.conj = []
       self.term = None
       self.arg = None
-      self.iters = 0
+      self.iters = 0 # This is the only time iters will be an int. We use type(X.iters) is int rather than X.int == 0 because the latter tries to invoke __eq__, which can't compare against non-ordinal objects.
     else:
       if "conj" in kwargs:
         self.conj = kwargs["conj"]
@@ -110,16 +119,36 @@ class ME:
       if "iters" in kwargs and kwargs["iters"] != 0:
         self.iters = kwargs["iters"]
       else:
-        self.iters = 1
+        raise Exception(f"ME constructor argument \"iters\" missing or zero.")
+      # More monotonous typechecking!
+      if type(self.iters) is int:
+        pass
+      elif not isinstance(self.conj, list):
+        raise Exception("Conjunctions of a shrewdness encoding must be formatted as a list.")
+      elif not isinstance(self.term, AT):
+        raise Exception("Term of a shrewdness encoding must be an arithmetic term.")
+      elif not isinstance(self.arg, ME):
+        raise Exception("Argument of a shrewdness encoding must be another shrewdness encoding.")
+      elif not isinstance(self.iters, Ordinal):
+        raise Exception("Iterations of a shrewdness encoding must be an ordinal.")
   def copy(self):
     return ME(conj=self.conj, term=self.term, arg=self.arg, iters=self.iters)
   def __repr__(self):
     return str(self)
   def __str__(self):
-    if self.iters == 0:
+    if type(self.iters) is int:
       return "∅"
     else:
       return f"({str(self.conj)}, {self.term}, {self.arg}, {self.iters})"
+  def V(self):
+    if type(self.iters) is int:
+      return []
+    else:
+      out = []
+      for k in self.conj:
+        out = listunion(out, k.V())
+      out = listunion(out, self.arg.V())
+      return listunion(out, [self.iters])
 
 ordtypes = {
   0: 0,
@@ -186,7 +215,7 @@ class Ordinal:
       case 2:
         return [self.copy()]
       case 3:
-        if comparand.inps["shrconf"].iters == 0:
+        if type(comparand.inps["shrconf"]) is int:
           return []
         else:
           return [self.copy()]
@@ -210,7 +239,7 @@ class Ordinal:
           return self.__le__(comparand.inps["summand"])
         elif comparand.type == 2:
           return self.inps["arg"].__le__(comparand.inps["arg"])
-        elif comparand.type == 3 and comparand.inps["shrconf"].iters == 0:
+        elif comparand.type == 3 and type(comparand.inps["shrconf"].iters) is int:
           return False
         else:
           return self.inps["arg"].__le__(comparand)
@@ -237,7 +266,7 @@ class Ordinal:
   def __eq__(self, comparand) -> bool:
     match self.type:
       case 0:
-        return True if comparand.type == 0 or (comparand.type == 3 and comparand.inps["shrconf"].iters == 0) else False
+        return True if comparand.type == 0 or (comparand.type == 3 and type(comparand.inps["shrconf"].iters) is int) else False
       case 1:
         return True if comparand.type == 1 and self.cnf() == comparand.cnf() else False
       case 2:
