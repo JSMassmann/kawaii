@@ -107,7 +107,7 @@ class ME:
         self.inp = kwargs["inp"]
       else:
         self.inp = ME().copy()
-      if "iters" in kwargs:
+      if "iters" in kwargs and kwargs["iters"] != 0:
         self.iters = kwargs["iters"]
       else:
         self.iters = 1
@@ -170,3 +170,19 @@ class Ordinal:
         return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["arg"]) + ")"
       case _:
         raise Exception("Ordinal could not be stringified.")
+  def __eq__(self, comparand: Ordinal) -> bool:
+    match (self.type, other.type):
+      case (0,0):
+        return True
+      case (0,1):
+        return self.__eq__(other.inps["summand"]) and self.__eq__(other.inps["addend"])
+      case (0,2):
+        return False
+      case (0,3):
+        return other.inps["shrconf"].iters == 0
+      case (0,4):
+        return False
+      case (1,0):
+        return self.inps["summand"].__eq__(other) and self.inps["addend"].__eq__(other)
+      case _:
+        raise Exception("Comparison for these ordinals currently unsupported.")
