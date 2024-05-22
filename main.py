@@ -74,7 +74,7 @@ class AT:
       case 1:
         return "t"
       case 2:
-        return str(self.inps["summand"]) + " + " + str(self.inps["addend"])
+        return str(self.inps["summand"]) + "+" + str(self.inps["addend"])
       case 3:
         if self.inps["arg"].type == 3:
           return strsucc(str(self.inps["arg"]))
@@ -158,7 +158,7 @@ class Ordinal:
       case 0:
         return "0"
       case 1:
-        return str(self.inps["summand"]) + " + " + str(self.inps["addend"])
+        return str(self.inps["summand"]) + "+" + str(self.inps["addend"])
       case 2:
         if self.inps["arg"].type == 2:
           return strsucc(str(self.inps["arg"]))
@@ -170,19 +170,19 @@ class Ordinal:
         return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["arg"]) + ")"
       case _:
         raise Exception("Ordinal could not be stringified.")
-  def __eq__(self, comparand: Ordinal) -> bool:
-    match (self.type, other.type):
+  def __eq__(self, comparand) -> bool:
+    match (self.type, comparand.type):
       case (0,0):
         return True
       case (0,1):
-        return self.__eq__(other.inps["summand"]) and self.__eq__(other.inps["addend"])
+        return self.__eq__(comparand.inps["summand"]) and self.__eq__(comparand.inps["addend"])
       case (0,2):
         return False
       case (0,3):
-        return other.inps["shrconf"].iters == 0
+        return comparand.inps["shrconf"].iters == 0
       case (0,4):
         return False
       case (1,0):
-        return self.inps["summand"].__eq__(other) and self.inps["addend"].__eq__(other)
+        return self.inps["summand"].__eq__(comparand) and self.inps["addend"].__eq__(comparand)
       case _:
         raise Exception("Comparison for these ordinals currently unsupported.")
