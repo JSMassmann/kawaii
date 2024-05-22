@@ -38,6 +38,17 @@ def strsucc(string): # Stringification for successor ordinals. When the input is
   plusstr = string[i+1:] if not noo else string[i+1:-1]
   return string[:i+1] + ["{",""][int(noo)] + plusstr + "+}"
 
+def normalize(cnf): # Normalization of a list of ordinals: converts it into CNF
+  i = 0
+  while i < len(cnf):
+    if i+1 == len(cnf):
+      break
+    if cnf[i] >= cnf[i+1]:
+      i += 1
+    else:
+      cnf = cnf[:i] + cnf[i+1:]
+  return cnf
+
 class AT:
   def __init__(self, type: int, **kwargs):
     self.type = type
@@ -170,19 +181,41 @@ class Ordinal:
         return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["arg"]) + ")"
       case _:
         raise Exception("Ordinal could not be stringified.")
-  def __eq__(self, comparand) -> bool:
-    match (self.type, comparand.type):
-      case (0,0):
+  def cnf(self) -> list:
+    match self.type:
+      case 0:
+        return []
+      case 1:
+        return self.inps["summand"].cnf() + self.inps["addend"].cnf()
+      case 2:
+        return [self.copy()]
+      case 3:
+        if comparand.inps["shrconf"].iters == 0:
+          return []
+        else:
+          return [self.copy()]
+      case 4:
+        return [self.copy()]
+  def __le__(self, comparand) -> bool: # Implicitly assumes terms involving anything in type 1 are CNF, which simplifies a big deal and is not too stringent in practical use.
+    match self.type:
+      case 0:
         return True
-      case (0,1):
-        return self.__eq__(comparand.inps["summand"]) and self.__eq__(comparand.inps["addend"])
-      case (0,2):
-        return False
-      case (0,3):
-        return comparand.inps["shrconf"].iters == 0
-      case (0,4):
-        return False
-      case (1,0):
-        return self.inps["summand"].__eq__(comparand) and self.inps["addend"].__eq__(comparand)
+      case 1:
+        if comparand.type == 0:
+          return False
+        elif comparand.type == 1:
+          return self.inps["summand"].__le__(comparand.inps["summand"])
+        else:
+          return self.inps["summand"].__le__(comparand)
+      case _:
+        raise Exception("Comparison for these ordinals currently unsupported.")
+  def __eq__(self, comparand) -> bool:
+    match self.type:
+      case 0:
+        return True if comparand.type == 0 or (comparand.type == 3 and comparand.inps["shrconf"].iters == 0) else False
+      case 1:
+        return True if comparand.type == 1 and self.cnf() == comparand.cnf() else False
+      case 2:
+        return True if comparand.type == 2 and self.inps()["arg"] == comparand.inps()["arg"] else False
       case _:
         raise Exception("Comparison for these ordinals currently unsupported.")
