@@ -7,8 +7,8 @@ Done so far:
 
 To do:
 
-- Create <code>ME</code> class (subclass of <code>tuple</code>) and <code>V: ME -> set</code> method.
-- Create (distinct) stringification and representation methods for <code>ME</code> class.
+- Create <code>V: ME -> set</code> method.
+- Create stringification method for <code>ME</code> class.
 - Improve stringification method for <code>AT</code> class.
 - Create <code>Ordinal</code> class with copying, stringification and comparison methods.
 - Add stricter typing to class constructors to ensure bad stuff doesn't happen.
