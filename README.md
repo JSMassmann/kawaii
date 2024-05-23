@@ -3,15 +3,17 @@ A Python library for handling ordinals up to, almost, the proof-theoretic ordina
 
 Done so far:
 
-- Constructor, copying and stringification methods for <code>AT</code>, <code>ME</code> and <code>Ordinal</code> classes.
+- Constructor, copying and stringification methods for <code>AT</code> class.
+- Constructor, copying and stringification methods for <code>ME</code> class.
+- Constructor, copying and stringificatiin (with plenty sugar) for <code>Ordinal</code> classes
 - Recursive <code>V: ME -> list</code> method.
 - Recursive <code>cnf: Ordinal -> list</code> method.
 
 To do:
 
-- More sugar for <code>Ordinal</code> stringification.
 - Comparison methods for <code>Ordinal</code> class.
 - Add stricter typing to <code>Ordinal</code> constructors to ensure bad stuff doesn't happen.
+- Standardization method for <code>Ordinal</code> class.
 - Arithmetic, e.g. addition, for <code>Ordinal</code> class.
 
 The library is based off of my OCF which reaches up to n-fold stability for finite n (but not quite nonprojectibility, i.e. limits of ω-fold stables). We have three classes:
