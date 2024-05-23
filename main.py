@@ -1,4 +1,5 @@
 from functools import total_ordering
+import re
 
 types = {
   0: 1,
@@ -173,6 +174,19 @@ ordargnames = {
   3: "shrconf",
   4: "collapser, arg, shrconf"
 }
+
+def sugar(string): # Add sugar to stringified ordinals, e.g. 1+1 = 2
+  # Initial replacements
+  out = string.replace("Ψ_{0^+}^{∅}(0)", "1")
+  out = out.replace("Ψ_{0^+}^{∅}(1)", "ω")
+  # Natural numbers
+  x = re.search("\d\+\d", out)
+  while x != None:
+    su = int(x.group().split("+")[0])
+    ad = int(x.group().split("+")[1])
+    out = out.replace(f"{su}+{ad}", str(su+ad))
+    x = re.search("\d\+\d", out)
+  return out
 
 @total_ordering
 class Ordinal:
