@@ -186,6 +186,20 @@ def sugar(string): # Add sugar to stringified ordinals, e.g. 1+1 = 2
     ad = int(x.group().split("+")[1])
     out = out.replace(f"{su}+{ad}", str(su+ad))
     x = re.search("\d+\+\d+", out)
+  # Cardinals
+  out = out.replace("0^+","Ω")
+  x = re.search("0\^\{\++\}", out)
+  while x != None:
+    count = x.span()[1]-x.span()[0]-4
+    out = out.replace("0^{" + "+" * count + "}", "Ω" + "".join(["₀₁₂₃₄₅₆₇₈₉"[int(i)] for i in str(count)]))
+    x = re.search("0\^\{\++\}", txt)
+  # Other powers of ω
+  x = re.search("Ψ_\{Ω\}\^\{∅\}\(\d+\)", out)
+  while x != None:
+    exp = x.group()[10:-1]
+    arg = "ω" + "".join(["⁰¹²³⁴⁵⁶⁷⁸⁹"[int(i)] for i in str(exp)])
+    out = out.replace("Ψ_{Ω}^{∅}(" + exp + ")", arg)
+    x = re.search("Ψ_\{Ω\}\^\{∅\}\(\d+\)", out)
   return out
 
 @total_ordering
