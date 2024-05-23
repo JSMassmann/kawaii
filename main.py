@@ -116,8 +116,8 @@ class ME:
       if "arg" in kwargs:
         self.arg = kwargs["arg"]
       else:
-        self.arg = ME().copy()
-      if "iters" in kwargs and kwargs["iters"] != 0:
+        self.arg = ME()
+      if "iters" in kwargs and type(kwargs["iters"]) is not int:
         self.iters = kwargs["iters"]
       else:
         raise Exception(f"ME constructor argument \"iters\" missing or zero.")
@@ -222,14 +222,14 @@ class Ordinal:
       case 0:
         return "0"
       case 1:
-        out = f"{str(self.inps["summand"])}+{str(self.inps["addend"])}"
+        out = f"{str(self.inps['summand'])}+{str(self.inps['addend'])}"
       case 2:
         if self.inps["arg"].type == 2:
           out = strsucc(str(self.inps["arg"]))
         else:
-          out = f"{str(self.inps["arg"])}^+"
+          out = f"{str(self.inps["arg'])}^+"
       case 3:
-        out = f"N({str(self.inps["shrconf"])})"
+        out = f"N({str(self.inps['shrconf'])})"
       case 4:
         out = "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["arg"]) + ")"
       case _:
