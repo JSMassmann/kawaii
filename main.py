@@ -180,12 +180,12 @@ def sugar(string): # Add sugar to stringified ordinals, e.g. 1+1 = 2
   out = string.replace("Ψ_{0^+}^{∅}(0)", "1")
   out = out.replace("Ψ_{0^+}^{∅}(1)", "ω")
   # Natural numbers
-  x = re.search("\d\+\d", out)
+  x = re.search("\d+\+\d+", out)
   while x != None:
     su = int(x.group().split("+")[0])
     ad = int(x.group().split("+")[1])
     out = out.replace(f"{su}+{ad}", str(su+ad))
-    x = re.search("\d\+\d", out)
+    x = re.search("\d+\+\d+", out)
   return out
 
 @total_ordering
@@ -208,18 +208,19 @@ class Ordinal:
       case 0:
         return "0"
       case 1:
-        return f"{str(self.inps["summand"])}+{str(self.inps["addend"])}"
+        out = f"{str(self.inps["summand"])}+{str(self.inps["addend"])}"
       case 2:
         if self.inps["arg"].type == 2:
-          return strsucc(str(self.inps["arg"]))
+          out = strsucc(str(self.inps["arg"]))
         else:
-          return f"{str(self.inps["arg"])}^+"
+          out = f"{str(self.inps["arg"])}^+"
       case 3:
-        return f"N({str(self.inps["shrconf"])})"
+        out = f"N({str(self.inps["shrconf"])})"
       case 4:
-        return "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["arg"]) + ")"
+        out = "Ψ_{" + str(self.inps["collapser"]) + "}^{" + str(self.inps["shrconf"]) + "}(" + str(self.inps["arg"]) + ")"
       case _:
         raise Exception("Ordinal could not be stringified.")
+    return sugar(out)
   def cnf(self) -> list:
     match self.type:
       case 0:
