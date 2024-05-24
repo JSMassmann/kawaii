@@ -177,8 +177,8 @@ ordargnames = {
 
 def sugar(string): # Add sugar to stringified ordinals, e.g. 1+1 = 2
   # Initial replacements
-  out = string.replace("Ψ_{0^+}^{∅}(0)", "1")
-  out = out.replace("Ψ_{0^+}^{∅}(1)", "ω")
+  out = string.replace("Ψ_{0^+}^{∅}(0)", "1").replace("Ψ_{Ω}^{∅}(0)", "1")
+  out = out.replace("Ψ_{0^+}^{∅}(1)", "ω").replace("Ψ_{Ω}^{∅}(1)", "ω")
   # Natural numbers
   x = re.search("\d+\+\d+", out)
   while x != None:
@@ -227,7 +227,7 @@ class Ordinal:
         if self.inps["arg"].type == 2:
           out = strsucc(str(self.inps["arg"]))
         else:
-          out = f"{str(self.inps["arg'])}^+"
+          out = f"{str(self.inps['arg'])}^+"
       case 3:
         out = f"N({str(self.inps['shrconf'])})"
       case 4:
